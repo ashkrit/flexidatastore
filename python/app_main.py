@@ -1,7 +1,16 @@
 from flexi_datasource import FlexiDataStore
 from datastore_factory import DataStoreFactory
 import sys
+import logging
+import sys
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.StreamHandler()
+    ]
+)
 
 
 
@@ -11,7 +20,7 @@ def main():
 
     ds = DataStoreFactory().create(dbLocation)
 
-    print(ds)
+    logging.info(f"Created data store {ds}")
 
     
 if __name__=="__main__":

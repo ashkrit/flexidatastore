@@ -1,6 +1,6 @@
 from flexi_datasource import FlexiDataStore
-from memory_datastore import InmemoryDataStore
+from memory_datastore import SQLiteDataStore
 
 class DataStoreFactory:
     def create(self,filePath:str) -> FlexiDataStore:
-        return InmemoryDataStore.make(path=filePath)
+        return SQLiteDataStore.make(path=filePath)

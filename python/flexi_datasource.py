@@ -2,12 +2,9 @@ from abc import ABC, abstractmethod
 
 class FlexiDataStore(ABC):
 
-    @abstractmethod
-    def list(Self):
-        pass
 
     @abstractmethod
-    def insert(Self):
+    def insert(Self,table:str,value:str):
         pass
 
     @abstractmethod
@@ -18,7 +15,6 @@ class FlexiDataStore(ABC):
     def delete(Self):
         pass
     
-
     @abstractmethod
-    def search(Self):
+    def search(Self,table:str) -> list[str]:
         pass

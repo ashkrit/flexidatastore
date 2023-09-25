@@ -7,7 +7,7 @@ class SearchParams():
      def append(self,key:str,op:str, value):
         self.data[key] = (op,value)   
 
-     def where_cluase(self) -> str :
+     def where_clause(self) -> str :
          return " AND ".join([ f"{k} {v[0]} {self.fv(v[1])}" for k,v in self.data.items()])
 
      def fv(self, value) -> str :
@@ -33,7 +33,7 @@ class FlexiDataStore(ABC):
         pass
 
     @abstractmethod
-    def update(Self):
+    def update(Self,table:str,key_col:str,key_val:str, row:str):
         pass
 
     @abstractmethod
@@ -41,5 +41,5 @@ class FlexiDataStore(ABC):
         pass
     
     @abstractmethod
-    def search(Self,table:str,params:SearchParams=None) -> list[str]:
+    def search(Self,table:str,params:SearchParams=None, limit:int=100) -> list[str]:
         pass

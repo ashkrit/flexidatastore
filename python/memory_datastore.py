@@ -13,8 +13,13 @@ class SQLiteDataStore(FlexiDataStore):
         logging.info(f"Connected to DB {self.conn}")
 
 
-    def delete(self, key):
-        del self.data[key]
+    def delete(self, table:str,key_col:str,key_val:str):
+        logging.info(f"Deleting {key_val} from {table}")
+        cursor = self.conn.cursor()
+        delete_sql = f"DELETE FROM {table} WHERE {key_col} = {key_val}"
+        cursor.execute(delete_sql)
+        cursor.close()
+        self.conn.commit()
 
     def insert(self, table:str,value:str):
         logging.info(f"Inserting {value} into {table}")   
@@ -43,20 +48,30 @@ class SQLiteDataStore(FlexiDataStore):
         else:
             return'VARCHAR'  
             
-            
 
+    def update(self, table:str,key_col:str,key_val:str, row:str):
+        logging.info(f"Updating {key_val} in {table}")
+        cursor = self.conn.cursor()
+        record = json.loads(row)
+        cursor = self.conn.cursor()
+        update_sql = f"UPDATE {table} SET "
+        for k in record.keys():
+            update_sql += f"{k} = '{record[k]}', "
 
-    def update(self, key):
-        self.data[key] = key        
+        update_sql = update_sql[:-2]
+        update_sql += f" WHERE {key_col} = {key_val}"
+        cursor.execute(update_sql)
+        cursor.close()
+        self.conn.commit()    
     
-    def search(self,table_name:str,params:SearchParams=None) -> list[str]:
+    def search(self,table_name:str,params:SearchParams=None,limit:int=100) -> list[str]:
 
         cursor = self.conn.cursor()
 
         if params is not None:
-            sql = f"SELECT * FROM {table_name} WHERE {params.where_cluase()}"
+            sql = f"SELECT * FROM {table_name} WHERE {params.where_clause()} LIMIT {limit}"
         else:
-            sql = f"SELECT * FROM {table_name}"    
+            sql = f"SELECT * FROM {table_name}  LIMIT {limit}"    
 
         data = cursor.execute(sql)
         results = []

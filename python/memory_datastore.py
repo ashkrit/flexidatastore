@@ -9,7 +9,7 @@ class SQLiteDataStore(FlexiDataStore):
     def __init__(self,dbPath:str):
         self.data = {}
         self.data["dbpath"] = dbPath
-        self.conn = sqlite3.connect(dbPath)
+        self.conn = sqlite3.connect(dbPath,check_same_thread=False)
         logging.info(f"Connected to DB {self.conn}")
 
 
@@ -72,6 +72,8 @@ class SQLiteDataStore(FlexiDataStore):
             sql = f"SELECT * FROM {table_name} WHERE {params.where_clause()} LIMIT {limit}"
         else:
             sql = f"SELECT * FROM {table_name}  LIMIT {limit}"    
+
+        logging.info(f"Executing SQL {sql}")    
 
         data = cursor.execute(sql)
         results = []

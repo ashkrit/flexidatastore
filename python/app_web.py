@@ -37,6 +37,16 @@ def search(tablename:str):
 
     return  jsonify(results)
 
+@app.route('/api/insert/<tablename>' , methods=['POST'])
+def insert(tablename:str):
+    logging.info(f"Inserting into table {tablename}")
+    data = request.get_json()
+    ds.insert(tablename,json.dumps(data))
+    return jsonify({
+        "table":tablename,
+        "data":data
+    })
+
 dbLocation = sys.argv[1]
 ds = DataStoreFactory().create(dbLocation)
 app.run(host='0000000', port=80)

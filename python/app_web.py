@@ -65,6 +65,6 @@ def delete(tablename:str,key_col:str,key_val:str):
         "table":tablename
     })
 
-dbLocation = sys.argv[1]
-ds = DataStoreFactory().create(dbLocation)
+db_location = sys.argv[1]
+ds = DataStoreFactory().create(db_location)
 app.run(host='0000000', port=80)

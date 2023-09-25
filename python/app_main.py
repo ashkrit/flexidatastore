@@ -17,9 +17,9 @@ logging.basicConfig(
 
 def main():
     
-    dbLocation = sys.argv[1]
+    db_location = sys.argv[1]
 
-    ds = DataStoreFactory().create(dbLocation)
+    ds = DataStoreFactory().create(db_location)
 
 
     logging.info(f"Created data store {ds}")

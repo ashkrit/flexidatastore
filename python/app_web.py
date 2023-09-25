@@ -47,6 +47,24 @@ def insert(tablename:str):
         "data":data
     })
 
+@app.route('/api/update/<tablename>/<key_col>/<key_val>' , methods=['PUT'])
+def update(tablename:str,key_col:str,key_val:str):
+    logging.info(f"Updating into table {tablename}/{key_col}/{key_val}")
+    data = request.get_json()
+    ds.update(tablename,key_col,key_val,json.dumps(data))
+    return jsonify({
+        "table":tablename,
+        "data":data
+    })
+
+@app.route('/api/update/<tablename>/<key_col>/<key_val>' , methods=['DELETE'])
+def delete(tablename:str,key_col:str,key_val:str):
+    logging.info(f"Updating into table {tablename}/{key_col}/{key_val}")
+    ds.delete(tablename,key_col,key_val)
+    return jsonify({
+        "table":tablename
+    })
+
 dbLocation = sys.argv[1]
 ds = DataStoreFactory().create(dbLocation)
 app.run(host='0000000', port=80)

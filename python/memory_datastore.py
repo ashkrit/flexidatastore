@@ -1,4 +1,4 @@
-from flexi_datasource import FlexiDataStore
+from flexi_datasource import FlexiDataStore,SearchParams
 import sqlite3
 import logging
 import sys
@@ -49,9 +49,16 @@ class SQLiteDataStore(FlexiDataStore):
     def update(self, key):
         self.data[key] = key        
     
-    def search(self,table_name:str) -> list[str]:
+    def search(self,table_name:str,params:SearchParams=None) -> list[str]:
+
         cursor = self.conn.cursor()
-        data = cursor.execute(f"SELECT * FROM {table_name}")
+
+        if params is not None:
+            sql = f"SELECT * FROM {table_name} WHERE {params.where_cluase()}"
+        else:
+            sql = f"SELECT * FROM {table_name}"    
+
+        data = cursor.execute(sql)
         results = []
         col_names = [d[0] for d in data.description]
     

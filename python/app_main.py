@@ -1,4 +1,4 @@
-from flexi_datasource import FlexiDataStore
+from flexi_datasource import FlexiDataStore,SearchParams
 from datastore_factory import DataStoreFactory
 import sys
 import logging
@@ -33,15 +33,16 @@ def main():
     """
     for product in products:
         ds.insert("products", json.dumps(product))
+    logging.info(f"Created products {products}")    
     """
     
-
-    logging.info(f"Created products {products}")
-
     result = ds.search("products")
-
     logging.info(f"Search result {result}")
 
+    search_params = SearchParams()
+    search_params.append("price", ">=",500)
+    result = ds.search("products", search_params )
+    logging.info(f"Search result {result}")
 
     
 if __name__=="__main__":

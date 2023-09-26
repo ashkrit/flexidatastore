@@ -63,3 +63,7 @@ if details:
             # Read document as string with utf-8 format
             raw_text = str(input_file.read(),"utf-8")
             st.write(raw_text)
+
+st.sidebar.title("Sidebar")
+st.sidebar.radio("Are you a New User", ["Yes", "No"])
+st.sidebar.slider("Select a Number", 0,10)

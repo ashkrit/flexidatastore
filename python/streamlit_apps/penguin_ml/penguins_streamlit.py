@@ -1,5 +1,6 @@
 import streamlit as st
 import pickle
+#import seaborn as sns
 
 rf_pickle = open('random_forest_penguin.pickle', 'rb')
 rfc = pickle.load(rf_pickle)

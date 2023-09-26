@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import altair as alt
 import matplotlib.pyplot as plt
+import graphviz as graphviz
+import seaborn as sns
 
 
 #Defining Columns
@@ -38,3 +40,39 @@ s = np.random.logistic(10, 5, size=5)
 chart, ax = plt.subplots()
 ax.hist(s, bins=15)
 st.write(chart)
+
+
+df = pd.DataFrame(
+    np.random.randn(40, 4),
+    columns=["C1", "C2", "C3", "C4"])
+# Bar Chart
+st.bar_chart(df)
+
+
+df = pd.DataFrame(
+    np.random.randn(40, 4),
+    columns=["C1", "C2", "C3", "C4"])
+st.line_chart(df)
+
+
+df = pd.DataFrame(
+    np.random.randn(40, 4),
+    columns=["C1", "C2", "C3", "C4"])
+st.area_chart(df)
+
+
+locate_map = pd.DataFrame(
+  np.random.randn(50, 2)/[10,10] + [15.4589, 75.0078],
+  columns = ['latitude', 'longitude'])
+# Map Function
+st.map(locate_map)
+
+
+st.graphviz_chart('''
+    digraph {
+        "Training Data" -> "ML Algorithm"
+        "ML Algorithm" -> "Model"
+        "Model" -> "Result Forecasting"
+        "New Data" -> "Model"
+    }
+''')

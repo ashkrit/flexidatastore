@@ -24,5 +24,8 @@ st.line_chart(df_dbh_grouped, x="dbh", y="tree_count")
 #st.line_chart(df_dbh_grouped)
 
 trees_df = trees_df.dropna(subset=['longitude', 'latitude'])
-trees_df = trees_df.sample(n = 1000)
+trees_df = trees_df.sample(100)
 st.map(trees_df)
+
+
+# https://deckgl.readthedocs.io/en/latest/layer.html

@@ -53,8 +53,6 @@ impl FlexDataStore for EmbedDataSource {
 
         let create_sql = String::from(format!("CREATE TABLE IF NOT EXISTS {table} ( {cols_text} )"));
 
-        println!("{:?}", create_sql);
-
         let connection = sqlite::open(self.db_path.as_str()).unwrap();
         connection
             .execute(create_sql)
@@ -67,8 +65,6 @@ impl FlexDataStore for EmbedDataSource {
             .join(" ,");
 
         let insert_sql = String::from(format!("INSERT INTO {table} VALUES ( {cols_values} )"));
-
-        println!("{:?}", insert_sql);
 
         connection
             .execute(insert_sql)

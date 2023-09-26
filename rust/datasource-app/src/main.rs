@@ -8,6 +8,7 @@ fn main() {
     let ds = flex_datasource(String::from("/Users/ashkrit/_tmp/db/rust_ecom_2.db"));
 
     let mut produts = vec![];
+
     produts.push(object! {
             "product_id":"1",
             "name":"Laptop",
@@ -26,8 +27,8 @@ fn main() {
             "price":3000
     });
 
-    for product in produts {
-        ds.insert("products", product.to_string().as_str());
+    for _product in produts {
+        //ds.insert("products", product.to_string().as_str());
     }
 
 

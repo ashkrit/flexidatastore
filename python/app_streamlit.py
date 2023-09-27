@@ -3,6 +3,8 @@ import requests
 import pandas as pd
 import json
 import app_streamlit_api
+import app_streamlit_sesion
+import datetime
 
 st.set_page_config(layout="wide")
 st.title("Ecommerce Admin Store")
@@ -10,17 +12,17 @@ st.title("Ecommerce Admin Store")
 tab_query, tab_crud,tab_logs = st.tabs(["Query Results","Create Products, Customers and Orders","Logs - Show Activity"]);
 
 
-
-if 'log_messages' not in st.session_state:
-    st.session_state.log_messages = log_messages = {
+app_streamlit_sesion.init_key('counter',0)
+app_streamlit_sesion.init_key('log_messages',{
+    "when":[],
     "action":[],
     "params":[],
     "result":[],
-}
+})
+app_streamlit_sesion.init_key('log_df',pd.DataFrame(app_streamlit_sesion.get_entry('log_messages')))
 
-if 'log_df' not in st.session_state:
-    st.session_state.log_df = pd.DataFrame(st.session_state.log_messages)
-
+def inc_message():
+     app_streamlit_sesion.update_entry('counter', app_streamlit_sesion.get_entry('counter') + 1)
 
 row2_col1,row2_col2 = st.columns(2)
 
@@ -29,11 +31,16 @@ def execute_insert(name:str, payload:str):
     if(insert_result.status_code == 200):
         st.success(f"Insert {name} success")
         
-        st.session_state.log_messages["action"].append("Insert")
-        st.session_state.log_messages["params"].append(f"{name} - {payload}")
-        st.session_state.log_messages["result"].append(f"Status {status_code}")
+        log_messages= app_streamlit_sesion.get_entry('log_messages')
+        log_messages["when"].append(datetime.datetime.now())
+        log_messages["action"].append("Insert")
+        log_messages["params"].append(f"{name} - {payload}")
+        log_messages["result"].append(f"Status {status_code}")
+        app_streamlit_sesion.update_entry('log_messages', log_messages)
 
-        st.session_state.log_df = pd.DataFrame(st.session_state.log_messages)
+        app_streamlit_sesion.update_entry('log_df', app_streamlit_sesion.get_entry('log_messages'))
+
+        inc_message()
         
     else:
         st.error(f"Insert {insert_result} failed")
@@ -62,13 +69,16 @@ with tab_query:
 
         table_data,status_code =app_streamlit_api.search_object(table_name)
 
-        st.session_state.log_messages["action"].append("Search")
-        st.session_state.log_messages["params"].append(f"{table_name}")
-        st.session_state.log_messages["result"].append(f"Status {status_code} - {table_data.size} Rows")
+        log_messages= app_streamlit_sesion.get_entry('log_messages')
+        log_messages["when"].append(datetime.datetime.now())
+        log_messages["action"].append("Search")
+        log_messages["params"].append(f"{table_name}")
+        log_messages["result"].append(f"Status {status_code} - {table_data.size} Rows")
+        app_streamlit_sesion.update_entry('log_messages', log_messages)
+        app_streamlit_sesion.update_entry('log_df', app_streamlit_sesion.get_entry('log_messages'))
 
-        st.session_state.log_df = pd.DataFrame(st.session_state.log_messages)
-        
-      
+        inc_message()
+    
         if(status_code == 200):
             st.write(table_data)
         else:    
@@ -80,6 +90,6 @@ with tab_query:
 
 
 with tab_logs:
-    st.write("#### Show users actions")
+    st.write(f"#### Show users actions {app_streamlit_sesion.get_entry('counter')} Messages")
     table = st.empty()
     table.dataframe(st.session_state.log_df)

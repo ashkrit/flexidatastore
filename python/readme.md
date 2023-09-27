@@ -1,6 +1,6 @@
 # What is this project about
 
-this project contains code from streamlit , generic database library and REST api opening database library
+This project combines code from Streamlit, a generic database library, and a REST API that exposes the database library.
 
 ## Which scripts are important
 
@@ -40,3 +40,13 @@ GET http://localhost/api/search/{tablename}
 
 ##### Delete
 DELETE http://localhost/api/delete/{tablename}/{pk}/2
+
+
+### Streamlit App
+Note: This need webserver up and running
+```
+streamlit run app_streamlit.py
+```
+
+#### Screen Snapshots 
+

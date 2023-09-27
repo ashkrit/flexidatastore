@@ -1,4 +1,3 @@
-use datasource_lib::FlexDataStore;
 use datasource_lib::flex_datasource;
 use json::object;
 

@@ -1,6 +1,7 @@
 use json::{JsonValue};
 use json;
 use sqlite;
+use sqlite::Connection;
 
 
 pub trait FlexDataStore {
@@ -17,22 +18,7 @@ pub struct EmbedDataSource {
 
 
 pub fn flex_datasource(db_path: String) -> Box<dyn FlexDataStore> {
-    Box::new(EmbedDataSource {db_path})
-}
-
-
-fn col_type(val: &JsonValue) -> String {
-    match val {
-        JsonValue::Number(_) => String::from("DOUBLE"),
-        _ => String::from("VARCHAR")
-    }
-}
-
-fn col_value(val: &JsonValue) -> String {
-    match val {
-        JsonValue::Number(v) => v.to_string(),
-        _ => String::from(format!(" '{val}' "))
-    }
+    Box::new(EmbedDataSource { db_path })
 }
 
 
@@ -45,7 +31,7 @@ impl FlexDataStore for EmbedDataSource {
         let cols_text = row
             .entries()
             .map(|(k, v)| {
-                let col_type = col_type(v);
+                let col_type = self.col_type(v);
                 format!("{k} {col_type}")
             })
             .collect::<Vec<String>>()
@@ -53,14 +39,14 @@ impl FlexDataStore for EmbedDataSource {
 
         let create_sql = String::from(format!("CREATE TABLE IF NOT EXISTS {table} ( {cols_text} )"));
 
-        let connection = sqlite::open(self.db_path.as_str()).unwrap();
+        let connection = self.open_connection();
         connection
             .execute(create_sql)
             .unwrap();
 
         let cols_values = row
             .entries()
-            .map(|(_, v)| { return col_value(v); })
+            .map(|(_, v)| { return self.col_value(v); })
             .collect::<Vec<String>>()
             .join(" ,");
 
@@ -73,38 +59,68 @@ impl FlexDataStore for EmbedDataSource {
 
 
     fn update(&self, table: &str, key_col: &str, key_val: &str, row: &str) -> () {
-        todo!()
+        let row = json::parse(row).unwrap();
+
+        let cols_values = row
+            .entries()
+            .map(|(k, v)| format!("{k}='{v}' "))
+            .collect::<Vec<String>>()
+            .join(",");
+
+        let query = format!("UPDATE {table} SET {cols_values} WHERE {key_col}={key_val}");
+        let connection = self.open_connection();
+        connection.execute(query).unwrap();
     }
 
     fn delete(&self, table: &str, key_col: &str, key_val: &str) -> () {
-        todo!()
+        let query = format!("DELETE FROM {table} WHERE {key_col} = {key_val}");
+        let connection = self.open_connection();
+        connection.execute(query).unwrap();
     }
 
     fn search(&self, table: &str) -> Vec<String> {
         let query = format!("SELECT * FROM {table}");
         println!("{}", query);
-        let connection = sqlite::open(self.db_path.as_str()).unwrap();
+        let connection = self.open_connection();
         let mut statement = connection
             .prepare(query)
             .unwrap();
 
-        let  names = statement.column_names().to_vec();
+        let names = statement.column_names().to_vec();
 
         let mut buffer: Vec<String> = Vec::new();
 
         while let Ok(sqlite::State::Row) = statement.next() {
-
-            let mut row = json::object!{};
+            let mut row = json::object! {};
 
             for name in names.iter() {
-                let value = statement.read::<String,_>(name.as_str()).unwrap();
+                let value = statement.read::<String, _>(name.as_str()).unwrap();
                 row.insert(name.as_str(), value).unwrap();
             }
 
             buffer.push(row.to_string());
-
         }
         return buffer;
+    }
+}
+
+impl EmbedDataSource {
+    fn open_connection(&self) -> Connection {
+        sqlite::open(self.db_path.as_str()).unwrap()
+    }
+
+    fn col_type(&self, val: &JsonValue) -> String {
+        match val {
+            JsonValue::Number(_) => String::from("DOUBLE"),
+            _ => String::from("VARCHAR")
+        }
+    }
+
+    fn col_value(&self, val: &JsonValue) -> String {
+        match val {
+            JsonValue::Number(v) => v.to_string(),
+            _ => String::from(format!(" '{val}' "))
+        }
     }
 }
 

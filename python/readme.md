@@ -48,6 +48,19 @@ Note: This need webserver up and running
 streamlit run app_streamlit.py
 ```
 
-#### Screen Snapshots 
+#### Screen Snapshots - Create
 
 ![image](img/Create.png)
+
+
+#### Screen Snapshots - Search
+
+![image](img/Search.png)
+
+#### Screen Snapshots - Logs
+
+![image](img/logs.png)
+
+#### Screen Snapshots - Payload
+
+![image](img/payload.png)

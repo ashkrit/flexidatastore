@@ -14,6 +14,23 @@ def insert_object(name: str, payload: str) -> requests.Response:
     }
     return requests.post(url, data=payload, headers=headers)
 
+def update_object(name: str, key_column:str,key_value:str, payload: str) -> requests.Response:
+    url = f"{base_url}/api/update/{name}/{key_column}/{key_value}"
+    print(f"Sennding {payload} to {name}")
+    headers = {
+        'Content-Type': "application/json"
+    }
+    return requests.put(url, data=payload, headers=headers)
+
+def delete_object(name: str, key_column:str,key_value:str) -> requests.Response:
+    url = f"{base_url}/api/delete/{name}/{key_column}/{key_value}"
+    print(f"Deleting {name} with {key_column} = {key_value}")
+    headers = {
+        'Content-Type': "application/json"
+    }
+    return requests.delete(url,headers=headers)
+
+
 def search_object(table_name: str) -> (pd.DataFrame,int):
     search_url = f"{base_url}/api/search/{table_name}"
     search_result=requests.get(search_url)

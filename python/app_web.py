@@ -57,7 +57,7 @@ def update(tablename:str,key_col:str,key_val:str):
         "data":data
     })
 
-@app.route('/api/update/<tablename>/<key_col>/<key_val>' , methods=['DELETE'])
+@app.route('/api/delete/<tablename>/<key_col>/<key_val>' , methods=['DELETE'])
 def delete(tablename:str,key_col:str,key_val:str):
     logging.info(f"Updating into table {tablename}/{key_col}/{key_val}")
     ds.delete(tablename,key_col,key_val)

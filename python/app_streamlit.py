@@ -36,9 +36,8 @@ def execute_insert(name:str, payload:str):
         log_messages["action"].append("Insert")
         log_messages["params"].append(f"{name} - {payload}")
         log_messages["result"].append(f"Status {status_code}")
-        app_streamlit_sesion.update_entry('log_messages', log_messages)
 
-        app_streamlit_sesion.update_entry('log_df', app_streamlit_sesion.get_entry('log_messages'))
+        app_streamlit_sesion.update_entry('log_df', pd.DataFrame(app_streamlit_sesion.get_entry('log_messages')))
 
         inc_message()
         
@@ -74,8 +73,7 @@ with tab_query:
         log_messages["action"].append("Search")
         log_messages["params"].append(f"{table_name}")
         log_messages["result"].append(f"Status {status_code} - {table_data.size} Rows")
-        app_streamlit_sesion.update_entry('log_messages', log_messages)
-        app_streamlit_sesion.update_entry('log_df', app_streamlit_sesion.get_entry('log_messages'))
+        app_streamlit_sesion.update_entry('log_df', pd.DataFrame(app_streamlit_sesion.get_entry('log_messages')))
 
         inc_message()
     
@@ -92,4 +90,4 @@ with tab_query:
 with tab_logs:
     st.write(f"#### Show users actions {app_streamlit_sesion.get_entry('counter')} Messages")
     table = st.empty()
-    table.dataframe(st.session_state.log_df)
+    table.dataframe(app_streamlit_sesion.get_entry('log_df'))
